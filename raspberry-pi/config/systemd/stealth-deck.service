@@ -1,0 +1,57 @@
+[Unit]
+Description=Stealth Deck AI Assistant Service
+Documentation=https://github.com/yourusername/stealth-deck
+After=network.target bluetooth.target multi-user.target
+Wants=bluetooth.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+
+WorkingDirectory=/opt/stealth-deck
+ExecStart=/opt/stealth-deck/venv/bin/python3 /opt/stealth-deck/src/main.py
+
+Restart=on-failure
+RestartSec=10
+StartLimitInterval=5min
+StartLimitBurst=3
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=stealth-deck
+
+Environment="PYTHONUNBUFFERED=1"
+Environment="PATH=/opt/stealth-deck/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+MemoryLimit=400M
+MemoryAccounting=yes
+
+CPUQuota=80%
+CPUAccounting=yes
+
+TasksMax=50
+
+Nice=-5
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/stealth-deck /var/log/stealth-deck /tmp/stealth-deck
+
+DeviceAllow=/dev/serial0 rw
+DeviceAllow=/dev/ttyAMA0 rw
+DeviceAllow=/dev/video0 rw
+DeviceAllow=/dev/gpiomem rw
+
+SupplementaryGroups=dialout video gpio bluetooth
+
+TimeoutStartSec=30
+TimeoutStopSec=10
+
+KillMode=mixed
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target

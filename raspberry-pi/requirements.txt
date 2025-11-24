@@ -1,0 +1,337 @@
+# ============================================================================
+# requirements.txt - Python Dependencies for Stealth Deck Raspberry Pi
+# ============================================================================
+# Version: 1.0.0
+# Date: 2025-11-24
+# Python Version: 3.9+
+#
+# Installation:
+#   pip3 install -r requirements.txt
+#
+# For production (with optimizations):
+#   pip3 install --no-cache-dir -r requirements.txt
+#
+# ============================================================================
+
+# ============================================================================
+# CORE DEPENDENCIES
+# ============================================================================
+
+# Python version requirement
+python-version>=3.9
+
+# ============================================================================
+# GOOGLE AI / GEMINI
+# ============================================================================
+
+# Google Generative AI (Gemini API)
+google-generativeai>=0.3.2
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+google-auth-httplib2>=0.1.1
+
+# Async support for Gemini
+aiohttp>=3.9.0
+asyncio>=3.4.3
+
+# ============================================================================
+# SERIAL COMMUNICATION (UART)
+# ============================================================================
+
+# PySerial for UART communication with ESP32
+pyserial>=3.5
+
+# MessagePack for binary protocol serialization
+msgpack>=1.0.7
+
+# ============================================================================
+# IMAGE PROCESSING
+# ============================================================================
+
+# Pillow for image manipulation and rendering
+Pillow>=10.1.0
+
+# PiCamera2 for Raspberry Pi Camera Module
+picamera2>=0.3.12
+
+# OpenCV (optional, for advanced image processing)
+# opencv-python>=4.8.1.78
+
+# NumPy for array operations
+numpy>=1.24.0
+
+# ============================================================================
+# BLUETOOTH
+# ============================================================================
+
+# PyBluez for Bluetooth communication
+pybluez>=0.23
+
+# BlueZ for Bluetooth stack (system package, not pip)
+# Install with: sudo apt-get install bluez python3-bluez
+
+# ============================================================================
+# CRYPTOGRAPHY & SECURITY
+# ============================================================================
+
+# Cryptography library for AES encryption
+cryptography>=41.0.7
+
+# PyCryptodome for additional crypto functions
+pycryptodome>=3.19.0
+
+# Secure deletion
+secure-delete>=0.1
+
+# ============================================================================
+# WEB SCRAPING (for search engine)
+# ============================================================================
+
+# Requests for HTTP operations
+requests>=2.31.0
+
+# BeautifulSoup4 for HTML parsing
+beautifulsoup4>=4.12.2
+
+# lxml for faster parsing
+lxml>=4.9.3
+
+# User-Agent spoofing
+fake-useragent>=1.4.0
+
+# ============================================================================
+# QR CODE GENERATION
+# ============================================================================
+
+# QR code generation
+qrcode>=7.4.2
+
+# QR code with image support
+qrcode[pil]>=7.4.2
+
+# ============================================================================
+# TEXT RENDERING
+# ============================================================================
+
+# Markdown parsing
+markdown>=3.5.1
+markdown2>=2.4.10
+
+# Syntax highlighting
+pygments>=2.17.2
+
+# LaTeX to Unicode conversion
+latex2mathml>=3.76.0
+sympy>=1.12
+
+# ============================================================================
+# SYSTEM UTILITIES
+# ============================================================================
+
+# psutil for system monitoring
+psutil>=5.9.6
+
+# python-daemon for daemonization
+python-daemon>=3.0.1
+
+# lockfile for PID file management
+lockfile>=0.12.2
+
+# GPIOZero for GPIO control (Raspberry Pi specific)
+gpiozero>=2.0
+
+# RPi.GPIO (alternative GPIO library)
+RPi.GPIO>=0.7.1
+
+# ============================================================================
+# CONFIGURATION & DATA
+# ============================================================================
+
+# PyYAML for YAML config support (optional)
+PyYAML>=6.0.1
+
+# python-dotenv for .env file support
+python-dotenv>=1.0.0
+
+# jsonschema for config validation
+jsonschema>=4.20.0
+
+# ============================================================================
+# LOGGING & MONITORING
+# ============================================================================
+
+# colorlog for colored console output
+colorlog>=6.8.0
+
+# systemd journal support
+systemd-python>=235
+
+# ============================================================================
+# CACHING
+# ============================================================================
+
+# diskcache for persistent caching
+diskcache>=5.6.3
+
+# cachetools for in-memory caching
+cachetools>=5.3.2
+
+# ============================================================================
+# TESTING (Development only)
+# ============================================================================
+
+# pytest for unit testing
+pytest>=7.4.3
+
+# pytest-asyncio for async test support
+pytest-asyncio>=0.21.1
+
+# pytest-cov for code coverage
+pytest-cov>=4.1.0
+
+# pytest-mock for mocking
+pytest-mock>=3.12.0
+
+# mock for creating test doubles
+mock>=5.1.0
+
+# ============================================================================
+# TYPE CHECKING (Development only)
+# ============================================================================
+
+# mypy for static type checking
+mypy>=1.7.1
+
+# types for standard library
+types-requests>=2.31.0
+types-Pillow>=10.1.0
+
+# ============================================================================
+# CODE QUALITY (Development only)
+# ============================================================================
+
+# black for code formatting
+black>=23.12.0
+
+# flake8 for linting
+flake8>=6.1.0
+
+# pylint for additional linting
+pylint>=3.0.3
+
+# isort for import sorting
+isort>=5.13.2
+
+# ============================================================================
+# DOCUMENTATION (Development only)
+# ============================================================================
+
+# Sphinx for documentation generation
+Sphinx>=7.2.6
+
+# sphinx-rtd-theme for ReadTheDocs theme
+sphinx-rtd-theme>=2.0.0
+
+# ============================================================================
+# PERFORMANCE OPTIMIZATION
+# ============================================================================
+
+# ujson for faster JSON parsing
+ujson>=5.9.0
+
+# Cython for C extensions (optional)
+# Cython>=3.0.7
+
+# ============================================================================
+# ADDITIONAL UTILITIES
+# ============================================================================
+
+# tqdm for progress bars
+tqdm>=4.66.1
+
+# click for CLI applications
+click>=8.1.7
+
+# python-magic for file type detection
+python-magic>=0.4.27
+
+# ============================================================================
+# NOTES:
+# ============================================================================
+#
+# System Dependencies (install via apt):
+#   sudo apt-get install -y \
+#       python3-dev \
+#       python3-pip \
+#       python3-setuptools \
+#       python3-wheel \
+#       libatlas-base-dev \
+#       libjpeg-dev \
+#       libopenblas-dev \
+#       liblapack-dev \
+#       gfortran \
+#       bluez \
+#       libbluetooth-dev \
+#       libcamera-dev \
+#       libportaudio2 \
+#       ffmpeg \
+#       libsm6 \
+#       libxext6
+#
+# ============================================================================
+# RASPBERRY PI SPECIFIC OPTIMIZATIONS:
+# ============================================================================
+#
+# For faster numpy/scipy on Raspberry Pi:
+#   sudo apt-get install -y libatlas-base-dev
+#   pip3 install numpy --no-binary numpy
+#
+# For picamera2:
+#   sudo apt-get install -y libcamera-dev
+#   sudo apt-get install -y python3-picamera2
+#
+# For Bluetooth:
+#   sudo apt-get install -y bluez libbluetooth-dev
+#   sudo pip3 install pybluez
+#
+# ============================================================================
+# MEMORY OPTIMIZATION:
+# ============================================================================
+#
+# On Raspberry Pi Zero 2W (512MB RAM), install without build dependencies:
+#   pip3 install --prefer-binary -r requirements.txt
+#
+# Or install one by one to avoid memory exhaustion:
+#   while read package; do
+#       pip3 install --no-cache-dir "$package"
+#   done < requirements.txt
+#
+# ============================================================================
+# VIRTUAL ENVIRONMENT (RECOMMENDED):
+# ============================================================================
+#
+# Create virtual environment:
+#   python3 -m venv /opt/stealth-deck/venv
+#   source /opt/stealth-deck/venv/bin/activate
+#   pip3 install --upgrade pip setuptools wheel
+#   pip3 install -r requirements.txt
+#
+# ============================================================================
+# FROZEN REQUIREMENTS (for reproducible builds):
+# ============================================================================
+#
+# Generate frozen requirements:
+#   pip3 freeze > requirements-frozen.txt
+#
+# Install from frozen:
+#   pip3 install -r requirements-frozen.txt
+#
+# ============================================================================
+# VERSION PINNING:
+# ============================================================================
+#
+# All versions use >= to allow patch updates
+# For production, consider pinning exact versions:
+#   pip3 freeze | grep -v "^-e" > requirements-pinned.txt
+#
+# ============================================================================

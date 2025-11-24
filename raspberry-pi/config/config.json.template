@@ -1,0 +1,136 @@
+{
+  "api_keys": {
+    "gemini_api_key": "YOUR_GEMINI_API_KEY_HERE",
+    "search_api_key": "",
+    "optional_apis": {
+      "openai_key": "",
+      "anthropic_key": ""
+    }
+  },
+  "hardware": {
+    "uart_port": "/dev/serial0",
+    "uart_baud": 115200,
+    "camera_enabled": true,
+    "camera_resolution": [1640, 1232],
+    "camera_format": "RGB888",
+    "camera_rotation": 0,
+    "battery_monitor_enabled": true,
+    "gpio_pins": {
+      "status_led": 18,
+      "power_button": 23
+    }
+  },
+  "features": {
+    "enable_p2p": true,
+    "enable_wifi_sniffer": true,
+    "enable_search": true,
+    "enable_voice": false,
+    "enable_offline_ai": false,
+    "max_clipboard_entries": 10,
+    "max_notes": 50
+  },
+  "security": {
+    "panic_key_combo": "FN+FIX",
+    "unlock_sequence": "FN+5+5+5",
+    "encryption_enabled": true,
+    "secure_delete_enabled": true,
+    "disable_bash_history": true,
+    "auto_lock_timeout": 300,
+    "wipe_on_panic": false,
+    "encryption_algorithm": "AES-256-GCM",
+    "key_derivation": "PBKDF2"
+  },
+  "power": {
+    "idle_timeout_seconds": 30,
+    "deep_sleep_timeout_seconds": 60,
+    "display_brightness_stealth": 5,
+    "display_brightness_normal": 30,
+    "display_brightness_outdoor": 100,
+    "cpu_governor": "ondemand",
+    "cpu_freq_min": 600,
+    "cpu_freq_max": 1000,
+    "throttle_temp_celsius": 70,
+    "battery_low_percent": 20,
+    "battery_critical_percent": 10
+  },
+  "display": {
+    "width": 240,
+    "height": 536,
+    "default_font_size": 12,
+    "line_spacing": 1.2,
+    "text_color": "white",
+    "background_color": "black",
+    "highlight_color": "cyan",
+    "error_color": "red",
+    "max_lines": 20,
+    "word_wrap": true
+  },
+  "ai": {
+    "gemini_model": "gemini-pro",
+    "gemini_vision_model": "gemini-pro-vision",
+    "max_tokens": 1024,
+    "temperature": 0.7,
+    "rate_limit_delay": 1.0,
+    "cache_responses": true,
+    "cache_ttl_seconds": 3600,
+    "conversation_history_size": 10,
+    "system_prompt": "You are a helpful AI assistant on a portable device. Keep responses concise and clear."
+  },
+  "p2p": {
+    "device_name": "StealthDeck",
+    "bluetooth_discoverable": false,
+    "bluetooth_pairable": true,
+    "auto_accept_known_devices": true,
+    "transfer_timeout_seconds": 30,
+    "chunk_size_bytes": 1024,
+    "max_transfer_size_mb": 10,
+    "encryption_enabled": true
+  },
+  "search": {
+    "default_engine": "google",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "timeout_seconds": 10,
+    "max_results": 5,
+    "cache_results": true,
+    "cache_ttl_seconds": 1800
+  },
+  "storage": {
+    "base_dir": "/var/lib/stealth-deck",
+    "notes_dir": "/var/lib/stealth-deck/notes",
+    "clipboard_dir": "/var/lib/stealth-deck/clipboard",
+    "cache_dir": "/var/lib/stealth-deck/cache",
+    "temp_dir": "/tmp/stealth-deck",
+    "max_cache_size_mb": 100,
+    "auto_cleanup_days": 7
+  },
+  "logging": {
+    "level": "INFO",
+    "log_dir": "/var/log/stealth-deck",
+    "max_log_size_mb": 10,
+    "backup_count": 5,
+    "console_output": false,
+    "log_uart": false,
+    "log_api_calls": true
+  },
+  "network": {
+    "wifi_interface": "wlan0",
+    "bluetooth_interface": "hci0",
+    "hotspot_enabled": false,
+    "hotspot_ssid": "StealthDeck-AP",
+    "hotspot_password": "StealthDeck2025"
+  },
+  "performance": {
+    "max_memory_mb": 400,
+    "max_cpu_percent": 80,
+    "process_priority": 0,
+    "thread_pool_size": 4,
+    "enable_profiling": false
+  },
+  "debug": {
+    "enabled": false,
+    "verbose": false,
+    "save_all_captures": false,
+    "test_mode": false,
+    "mock_hardware": false
+  }
+}
