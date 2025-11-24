@@ -1,0 +1,29 @@
+text
+Category,Component,Specification,Quantity,Unit Price (USD),Total Price (USD),Supplier,Part Number,Notes
+Core,ESP32 DevKit,ESP32-WROOM-32 4MB Flash,1,8.00,8.00,AliExpress,ESP32-DevKitC-32D,NodeMCU compatible
+Core,Raspberry Pi Zero 2W,BCM2710A1 1GHz Quad-core,1,15.00,15.00,Official,SC0510,512MB RAM
+Display,OLED Display,240x536px I2C SSD1306,1,12.00,12.00,AliExpress,2.4-OLED-SSD1306,Monochrome white
+Input,Matrix Keypad,5x4 membrane keypad,1,3.00,3.00,AliExpress,5x4-Membrane,20 keys total
+Camera,Pi Camera Module,v2 8MP 1080p,1,25.00,25.00,Official,Camera Module V2,or v3 12MP
+Power,18650 Battery,3.7V 3000mAh Li-ion,1,5.00,5.00,AliExpress,Protected-18650,Protection circuit
+Power,18650 Holder,Single cell holder with leads,1,1.00,1.00,AliExpress,18650-Holder-1S,With solder tabs
+Power,Buck Converter,5V 3A step-down,1,2.00,2.00,AliExpress,Mini-560-HM,Adjustable output
+Power,LDO Regulator,3.3V 1A AMS1117,1,0.50,0.50,AliExpress,AMS1117-3.3,SOT-223 package
+Power,TP4056 Module,Li-ion charger module,1,1.00,1.00,AliExpress,TP4056-1A,With protection
+Connectors,MicroSD Card,32GB Class 10,1,8.00,8.00,Amazon,SanDisk-Ultra,For Raspberry Pi
+Connectors,USB-C Cable,5V 2A charging,1,3.00,3.00,Amazon,USB-C-1m,For charging
+Connectors,Camera Cable,15cm CSI ribbon,1,2.00,2.00,AliExpress,CSI-15cm,Official cable
+Connectors,Pin Headers,2.54mm male headers,1 set,1.00,1.00,AliExpress,40-Pin-Header,Breakable
+Passives,Resistor 10kΩ,1/4W through-hole,5,0.02,0.10,AliExpress,10K-Resistor,Pull-up resistors
+Passives,Resistor 4.7kΩ,1/4W through-hole,2,0.02,0.04,AliExpress,4.7K-Resistor,I2C pull-up
+Passives,Capacitor 100µF,Electrolytic 16V,2,0.10,0.20,AliExpress,100uF-16V,Power filtering
+Passives,Capacitor 0.1µF,Ceramic 50V,5,0.05,0.25,AliExpress,0.1uF-Ceramic,Decoupling
+PCB,Perfboard,9x15cm prototype board,1,2.00,2.00,AliExpress,PCB-915,For assembly
+Wiring,Jumper Wires,Male-male 20cm pack,1 pack,2.00,2.00,AliExpress,Jumper-MM-40,Assorted colors
+Wiring,Solid Wire,22 AWG hookup wire,1m,1.00,1.00,AliExpress,22AWG-Wire,Red/black
+Hardware,Standoffs,M2.5 10mm nylon,4,0.50,2.00,AliExpress,M2.5-10mm,With screws
+Hardware,Enclosure,3D printed case,1,0.00,0.00,Self-print,N/A,STL files provided
+Optional,Buzzer,5V passive buzzer,1,0.50,0.50,AliExpress,Passive-5V,For alerts
+Optional,Power Switch,SPDT slide switch,1,0.50,0.50,AliExpress,SS12D00,On/off switch
+Optional,LED,3mm red LED,1,0.10,0.10,AliExpress,LED-Red-3mm,Status indicator
+Total,,,,,98.21,,,Estimated total cost
