@@ -1,0 +1,105 @@
+{
+  "_comment": "Stealth Deck Configuration Example",
+  "_version": "0.5.0",
+  "_description": "Copy this file to config.json and fill in your values",
+  
+  "api_keys": {
+    "_comment": "API keys for external services",
+    "gemini_api_key": "your-gemini-api-key-here"
+  },
+  
+  "hardware": {
+    "_comment": "Hardware configuration",
+    "uart_port": "/dev/serial0",
+    "uart_baud": 115200,
+    "uart_timeout": 1,
+    "camera_enabled": true,
+    "camera_resolution": [1640, 1232],
+    "camera_quality": 85,
+    "display_width": 240,
+    "display_height": 64
+  },
+  
+  "ai": {
+    "_comment": "AI model configuration",
+    "model": "gemini-pro",
+    "vision_model": "gemini-pro-vision",
+    "temperature": 0.7,
+    "max_tokens": 1024,
+    "top_p": 0.95,
+    "top_k": 40,
+    "cache_responses": true,
+    "cache_ttl": 3600,
+    "timeout": 30
+  },
+  
+  "security": {
+    "_comment": "Security settings - IMPORTANT: Change these defaults!",
+    "encryption_enabled": true,
+    "wipe_on_panic": true,
+    "unlock_code_hash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+    "_unlock_code_note": "Default hash is for code '555' - CHANGE THIS!",
+    "auto_lock_timeout": 300,
+    "max_unlock_attempts": 5
+  },
+  
+  "storage": {
+    "_comment": "Storage and cache settings",
+    "data_dir": "/home/pi/stealth-deck/data",
+    "max_cache_size_mb": 100,
+    "auto_cleanup": true,
+    "cleanup_days": 7
+  },
+  
+  "power": {
+    "_comment": "Power management",
+    "cpu_mode": "balanced",
+    "auto_sleep": true,
+    "sleep_timeout": 300
+  },
+  
+  "features": {
+    "_comment": "Feature toggles",
+    "notes_enabled": true,
+    "clipboard_enabled": true,
+    "clipboard_history_size": 20,
+    "qr_generator_enabled": true,
+    "calculator_history": true,
+    "search_enabled": true,
+    "p2p_enabled": true
+  },
+  
+  "p2p": {
+    "_comment": "Peer-to-peer transfer settings",
+    "device_name": "Stealth-Deck",
+    "discovery_timeout": 10,
+    "transfer_chunk_size": 4096,
+    "encryption_enabled": true
+  },
+  
+  "display": {
+    "_comment": "Display rendering settings",
+    "text_size": 1,
+    "line_spacing": 2,
+    "word_wrap": true,
+    "max_lines": 8,
+    "scroll_speed": 50
+  },
+  
+  "logging": {
+    "_comment": "Logging configuration",
+    "level": "INFO",
+    "file": "/home/pi/stealth-deck/logs/stealth-deck.log",
+    "max_size_mb": 10,
+    "backup_count": 5,
+    "console_output": true
+  },
+  
+  "network": {
+    "_comment": "Network settings",
+    "wifi_enabled": true,
+    "connection_timeout": 10,
+    "retry_attempts": 3,
+    "offline_mode": false
+  }
+}

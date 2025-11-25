@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  stealth-deck:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/Dockerfile
+    container_name: stealth-deck
+    restart: unless-stopped
+    
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - LOG_LEVEL=INFO
+      - DEBUG_MODE=false
+    
+    volumes:
+      - stealth-deck-data:/data
+      - ./config:/app/config:ro
+    
+    devices:
+      # UART device
+      - /dev/ttyAMA0:/dev/ttyAMA0
+    
+    privileged: false
+    
+    networks:
+      - stealth-network
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  stealth-deck-data:
+    driver: local
+
+networks:
+  stealth-network:
+    driver: bridge

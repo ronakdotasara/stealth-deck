@@ -1,0 +1,164 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-python:
+    name: Python Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: [3.9, '3.10', 3.11]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('raspberry-pi/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        cd raspberry-pi
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+    
+    - name: Lint with flake8
+      run: |
+        cd raspberry-pi
+        flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 src/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Type check with mypy
+      run: |
+        cd raspberry-pi
+        mypy src/ --ignore-missing-imports
+      continue-on-error: true
+    
+    - name: Run tests
+      run: |
+        cd raspberry-pi
+        pytest tests/ -v --cov=src --cov-report=xml --cov-report=html
+    
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./raspberry-pi/coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  test-esp32:
+    name: ESP32 Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-pio
+    
+    - name: Install PlatformIO
+      run: |
+        pip install platformio
+    
+    - name: Build ESP32 firmware
+      run: |
+        cd esp32
+        pio run
+    
+    - name: Run ESP32 tests
+      run: |
+        cd esp32
+        pio test
+      continue-on-error: true
+
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    - name: Install dependencies
+      run: |
+        pip install black isort pylint
+    
+    - name: Check code formatting
+      run: |
+        cd raspberry-pi
+        black --check src/
+        isort --check-only src/
+    
+    - name: Run pylint
+      run: |
+        cd raspberry-pi
+        pylint src/ --exit-zero
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run Bandit security scan
+      run: |
+        pip install bandit
+        cd raspberry-pi
+        bandit -r src/ -f json -o bandit-report.json
+      continue-on-error: true
+    
+    - name: Upload security report
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-report
+        path: raspberry-pi/bandit-report.json
+
+  build-docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    - name: Install dependencies
+      run: |
+        pip install sphinx sphinx-rtd-theme
+    
+    - name: Build documentation
+      run: |
+        cd docs
+        make html
+      continue-on-error: true

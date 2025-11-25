@@ -1,0 +1,27 @@
+{
+  "description": "Minimal configuration for Stealth Deck",
+  "version": "0.5.0",
+  
+  "api_keys": {
+    "gemini_api_key": "your-api-key-here"
+  },
+  
+  "hardware": {
+    "uart_port": "/dev/serial0",
+    "uart_baud": 115200,
+    "camera_enabled": true,
+    "display_width": 240,
+    "display_height": 64
+  },
+  
+  "ai": {
+    "model": "gemini-pro",
+    "temperature": 0.7,
+    "max_tokens": 1024
+  },
+  
+  "security": {
+    "encryption_enabled": true,
+    "unlock_code_hash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"
+  }
+}
