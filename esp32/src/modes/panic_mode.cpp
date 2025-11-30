@@ -8,13 +8,26 @@
 #include "../communication/uart_protocol.h"
 #include "../display/display_driver.h"
 #include "../modes/calculator_mode.h"
-#include <WiFi.h>  // ADD THIS
+#include <WiFi.h>
+#include <BluetoothSerial.h>
 
 extern UARTProtocol uart;
 extern DisplayDriver display;
 extern CalculatorMode calculator;
 
+// ============================================================================
+// CONSTRUCTOR + MAIN INTEGRATION
+// ============================================================================
+
 PanicMode::PanicMode() {
+    reset();
+}
+
+void PanicMode::begin() {
+    Serial.println("│ ✓ Panic mode ready");
+}
+
+void PanicMode::reset() {
     active = false;
     trigger = PANIC_TRIGGER_NONE;
     activationTime = 0;
@@ -22,12 +35,23 @@ PanicMode::PanicMode() {
     blinkState = false;
 }
 
-void PanicMode::activate(PanicTrigger triggerType) {
-    if (active) {
-        return;
-    }
+void PanicMode::handleKey(uint8_t key) {
+    if (!active) return;
     
-    Serial.println("!!! PANIC MODE ACTIVATED !!!");
+    // Recovery key (HASH/#)
+    if (key == PANIC_RECOVERY_KEY) {
+        deactivate();
+    }
+}
+
+// ============================================================================
+// PANIC ACTIVATION
+// ============================================================================
+
+void PanicMode::activate(PanicTrigger triggerType) {
+    if (active) return;
+    
+    Serial.println("🔴 !!! PANIC MODE ACTIVATED !!! 🔴");
     
     active = true;
     trigger = triggerType;
@@ -41,77 +65,68 @@ void PanicMode::activate(PanicTrigger triggerType) {
     lockDevice();
 }
 
-void PanicMode::deactivate() {
-    if (!active) {
-        return;
-    }
-    
-    Serial.println("Panic mode deactivated");
-    
-    active = false;
-    trigger = PANIC_TRIGGER_NONE;
-}
+// ✅ REMOVED: Duplicate deactivate() - Uses header inline version
 
-bool PanicMode::isActive() {
-    return active;
-}
+bool PanicMode::isActive() { return active; }
+PanicTrigger PanicMode::getTrigger() { return trigger; }
 
-PanicTrigger PanicMode::getTrigger() {
-    return trigger;
-}
+// ============================================================================
+// MAIN UPDATE LOOP
+// ============================================================================
 
 void PanicMode::update() {
-    if (!active) {
+    if (!active) return;
+    
+    unsigned long now = millis();
+    
+    // Timeout after 30 seconds
+    if (now - activationTime > PANIC_TIMEOUT_MS) {
+        deactivate();
         return;
     }
     
-    if (millis() - lastBlinkTime > 500) {
+    // Blink indicator (top-right corner)
+    if (now - lastBlinkTime > PANIC_BLINK_INTERVAL) {
         blinkState = !blinkState;
-        lastBlinkTime = millis();
+        lastBlinkTime = now;
         
-        // FIXED: Use COLOR_WHITE and COLOR_BLACK instead of true/false
-        if (blinkState) {
-            display.drawPixel(235, 5, COLOR_WHITE);
-        } else {
-            display.drawPixel(235, 5, COLOR_BLACK);
-        }
-        display.flush();  // FIXED: Use flush() instead of display()
+        uint16_t dotColor = blinkState ? COLOR_RED : COLOR_BLACK;
+        display.fillRect(300, 5, 15, 10, dotColor);
+        display.flush();
     }
 }
 
+// ============================================================================
+// DISPLAY SCREENS (320x170)
+// ============================================================================
+
 void PanicMode::displayPanicScreen() {
-    display.clear();
-    
-    // FIXED: Add color parameter
-    display.drawText(60, 250, "LOCKED", COLOR_WHITE, 3);
-    
-    // FIXED: Add color parameter
-    display.drawRect(50, 240, 140, 40, COLOR_WHITE);
-    
-    display.flush();  // FIXED: Use flush() instead of display()
-    
+    display.clear(COLOR_BLACK);
+    display.drawText(80, 50, "LOCKED", COLOR_RED, 3);
+    display.drawRect(70, 40, 180, 50, COLOR_WHITE);
+    display.flush();
     delay(1000);
 }
 
 void PanicMode::displayRecoveryPrompt() {
-    display.clear();
-    
-    // FIXED: Add color parameters
-    display.drawText(10, 10, "Device Locked", COLOR_WHITE, 2);
-    display.drawText(10, 40, "Enter unlock code:", COLOR_WHITE, 1);
-    
-    display.flush();  // FIXED: Use flush() instead of display()
+    display.clear(COLOR_BLACK);
+    display.drawText(50, 20, "DEVICE LOCKED", COLOR_WHITE, 2);
+    display.drawText(40, 60, "Press # to recover", COLOR_YELLOW, 1);
+    display.flush();
 }
+
+// ============================================================================
+// SECURITY FUNCTIONS
+// ============================================================================
 
 void PanicMode::enableWireless(bool enable) {
     if (enable) {
         Serial.println("Enabling wireless...");
+        WiFi.mode(WIFI_STA);
     } else {
         Serial.println("Disabling wireless...");
-        
         WiFi.disconnect(true);
-        WiFi.mode(WIFI_MODE_NULL);  // FIXED: Use WIFI_MODE_NULL instead of WIFI_OFF
-        
+        WiFi.mode(WIFI_OFF);
         btStop();
     }
 }
@@ -121,65 +136,68 @@ void PanicMode::clearSensitiveData() {
 }
 
 void PanicMode::lockDevice() {
-    Serial.println("Device locked");
+    Serial.println("Device locked - Safe mode active");
 }
 
-unsigned long PanicMode::getActivationTime() {
-    return activationTime;
-}
+unsigned long PanicMode::getActivationTime() { return activationTime; }
+
+// ============================================================================
+// COMMUNICATION
+// ============================================================================
 
 void PanicMode::sendPanicSignalToPI() {
-    Serial.println("Sending panic signal to Pi...");
-    
-    uart.sendPanic();  // FIXED: Use sendPanic() instead of sendPanicSignal()
+    Serial.println("📡 Sending PANIC signal to Pi...");
+    uart.sendPanic();
 }
 
+// ============================================================================
+// CALCULATOR INTEGRATION
+// ============================================================================
+
 void PanicMode::switchToCalculatorMode() {
-    Serial.println("Switching to calculator mode...");
-    
+    Serial.println("Switching to safe calculator mode...");
     calculator.reset();
-    calculator.begin();
+    calculator.generateFakeHistory();
 }
 
 void PanicMode::displayFakeHistory() {
     Serial.println("Displaying fake calculator history...");
     
-    calculator.generateFakeHistory();
+    display.clear(COLOR_BLACK);
+    display.drawText(80, 10, "CALCULATOR", COLOR_WHITE, 2);
+    display.drawText(10, 35, "Recent History:", COLOR_GRAY, 1);
     
-    display.clear();
-    
-    // FIXED: Add color parameters
-    display.drawText(10, 10, "Calculator", COLOR_WHITE, 2);
-    display.drawText(10, 40, "Recent:", COLOR_WHITE, 1);
-    
-    int y = 60;
-    for (int i = 0; i < 5 && i < calculator.getHistoryCount(); i++) {
+    int y = 55;
+    for (int i = 0; i < 4 && i < calculator.getHistoryCount(); i++) {
         auto* entry = calculator.getHistory(i);
         if (entry) {
-            // FIXED: Add color parameter
-            display.drawText(10, y, entry->expression, COLOR_WHITE, 1);
+            char line[32];
+            snprintf(line, 32, "%s=%.1f", entry->expression, entry->result);
+            display.drawText(10, y, line, COLOR_WHITE, 1);
             y += 15;
         }
     }
     
-    // FIXED: Add color parameter
-    display.drawText(10, 520, "Normal calculator", COLOR_WHITE, 1);
-    display.flush();  // FIXED: Use flush() instead of display()
+    display.drawText(10, 150, "#: Recover", COLOR_YELLOW, 1);
+    display.flush();
 }
 
+// ============================================================================
+// VISUAL EFFECTS
+// ============================================================================
+
 void PanicMode::flashScreen() {
-    for (int i = 0; i < 3; i++) {
-        // FIXED: Use fillRect to fill entire screen
-        display.fillRect(0, 0, 240, 536, COLOR_WHITE);
-        display.flush();  // FIXED: Use flush() instead of display()
-        delay(50);
+    for (int i = 0; i < 4; i++) {
+        display.fillScreen(COLOR_RED);
+        display.flush();
+        delay(80);
         
-        display.clear();
-        display.flush();  // FIXED: Use flush() instead of display()
-        delay(50);
+        display.clear(COLOR_BLACK);
+        display.flush();
+        delay(80);
     }
 }
 
 void PanicMode::playPanicSound() {
-    // Optional: Add buzzer beep
+    // TODO: Buzzer if available
 }

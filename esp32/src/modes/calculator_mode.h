@@ -6,20 +6,6 @@
  * Date: 2025-11-30
  * Author: Stealth Deck Project
  * License: MIT
- * 
- * ============================================================================
- * DESCRIPTION:
- * Calculator mode implementation providing stealth cover for the device.
- * Implements a fully functional calculator with history to appear legitimate.
- * 
- * Features:
- * - Basic arithmetic operations (+, -, *, /)
- * - Advanced functions (sin, cos, tan, sqrt, pow)
- * - Memory functions (M+, M-, MR, MC)
- * - Calculation history
- * - Fake history generation for panic mode
- * - Scientific notation support
- * 
  * ============================================================================
  */
 
@@ -27,11 +13,16 @@
 #define CALCULATOR_MODE_H
 
 #include <Arduino.h>
-#include "../input/keypad.h"  // ADD THIS - For KeyEvent type
+#include "../config.h"                  // ✅ MAX_HISTORY_ENTRIES = 10
+#include "../input/keypad.h"            // ✅ KeyEvent type
+
+// ============================================================================
+// CALCULATOR CONSTANTS (Uses config.h for history)
+// ============================================================================
 
 #define MAX_DISPLAY_LENGTH 16
-#define MAX_HISTORY_ENTRIES 20
 #define MAX_EXPRESSION_LENGTH 64
+// ✅ REMOVED: #define MAX_HISTORY_ENTRIES 20 (uses config.h = 10)
 
 enum CalculatorState {
     CALC_STATE_IDLE,
@@ -67,7 +58,7 @@ public:
     void begin();
     void reset();
     
-    // ADD THESE NEW METHODS FOR MAIN.CPP:
+    // Main integration methods
     void activate() {
         Serial.println("Calculator mode activated");
         reset();
@@ -79,17 +70,15 @@ public:
     
     void update() {
         // Update calculator display if needed
-        // This can be called periodically to refresh the display
     }
     
     void handleKeyEvent(KeyEvent event) {
-        // Wrapper for handleKey that accepts KeyEvent
         if (event.type == KEY_EVENT_PRESS) {
             handleKey(event.key);
         }
     }
     
-    // EXISTING METHODS:
+    // Core calculator functions
     void handleKey(uint8_t key);
     void handleDigit(uint8_t digit);
     void handleOperator(CalculatorOperator op);
@@ -103,17 +92,19 @@ public:
     void handleMemoryRecall();
     void handleMemoryClear();
     
+    // Getters
     const char* getDisplayText();
     double getCurrentValue();
     CalculatorState getState();
     
+    // History
     void addToHistory(const char* expr, double result);
     CalculatorHistory* getHistory(uint8_t index);
     uint8_t getHistoryCount();
     void clearHistory();
     
     void generateFakeHistory();
-    
+
 private:
     char displayBuffer[MAX_DISPLAY_LENGTH + 1];
     char expressionBuffer[MAX_EXPRESSION_LENGTH];
@@ -128,7 +119,7 @@ private:
     bool hasDecimal;
     uint8_t decimalPlaces;
     
-    CalculatorHistory history[MAX_HISTORY_ENTRIES];
+    CalculatorHistory history[MAX_HISTORY_ENTRIES];  // ✅ Uses config.h (10)
     uint8_t historyCount;
     uint8_t historyIndex;
     
@@ -142,4 +133,4 @@ private:
     double performUnaryOperation(double a, CalculatorOperator op);
 };
 
-#endif
+#endif // CALCULATOR_MODE_H

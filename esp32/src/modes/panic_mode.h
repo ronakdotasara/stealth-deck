@@ -3,23 +3,9 @@
  * panic_mode.h - Panic Mode for Stealth Deck
  * ============================================================================
  * Version: 1.0.0
- * Date: 2025-11-24
+ * Date: 2025-11-30
  * Author: Stealth Deck Project
  * License: MIT
- * 
- * ============================================================================
- * DESCRIPTION:
- * Emergency panic mode implementation for instant lockdown.
- * Activates when FN+FIX keys are pressed simultaneously.
- * 
- * Features:
- * - Instant screen lock
- * - Return to calculator mode
- * - Display fake history
- * - Disable wireless
- * - Send panic signal to Pi
- * - Visual indicator
- * 
  * ============================================================================
  */
 
@@ -27,6 +13,16 @@
 #define PANIC_MODE_H
 
 #include <Arduino.h>
+#include "../config.h"              // ✅ SystemMode, KeyEvent
+#include "../input/keypad.h"        // ✅ KeyEvent type
+
+// ============================================================================
+// PANIC MODE CONSTANTS
+// ============================================================================
+
+#define PANIC_BLINK_INTERVAL  200
+#define PANIC_TIMEOUT_MS     30000
+#define PANIC_RECOVERY_KEY   KEY_HASH
 
 enum PanicTrigger {
     PANIC_TRIGGER_NONE,
@@ -40,13 +36,31 @@ class PanicMode {
 public:
     PanicMode();
     
-    void activate(PanicTrigger trigger);
-    void deactivate();
+    void begin();
+    void reset();
     
-    bool isActive();
-    PanicTrigger getTrigger();
+    // ✅ ADDED: Main.cpp integration methods
+    void activate() {
+        activate(PANIC_TRIGGER_MANUAL);
+    }
+    
+    void deactivate() {
+        Serial.println("Panic mode deactivated");
+    }
     
     void update();
+    
+    // ✅ ADDED: KeyEvent handling for main.cpp
+    void handleKeyEvent(KeyEvent event) {
+        if (event.type == KEY_EVENT_PRESS) {
+            handleKey(event.key);
+        }
+    }
+    
+    // Core panic functions
+    void activate(PanicTrigger trigger);
+    bool isActive();
+    PanicTrigger getTrigger();
     
     void displayPanicScreen();
     void displayRecoveryPrompt();
@@ -56,21 +70,20 @@ public:
     void lockDevice();
     
     unsigned long getActivationTime();
-    
+
 private:
     bool active;
     PanicTrigger trigger;
-    
     unsigned long activationTime;
     unsigned long lastBlinkTime;
     bool blinkState;
     
+    void handleKey(uint8_t key);
     void sendPanicSignalToPI();
     void switchToCalculatorMode();
     void displayFakeHistory();
-    
     void flashScreen();
     void playPanicSound();
 };
 
-#endif
+#endif // PANIC_MODE_H
