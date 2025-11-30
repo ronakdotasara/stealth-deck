@@ -3,7 +3,7 @@
  * @file keypad.cpp
  * @brief 5×4 Matrix Keypad Driver Implementation
  * @version 1.0.0
- * @date 2025-11-24
+ * @date 2025-11-30
  * @author Stealth Deck Project
  * @license MIT
  * 
@@ -68,7 +68,10 @@
  * ============================================================================
  */
 
+
 #include "keypad.h"
+#include "config.h"
+
 
 // Debug logging
 #ifdef DEBUG
@@ -79,9 +82,11 @@
   #define KEYPAD_DEBUGF(format, ...)
 #endif
 
+
 // ============================================================================
 // T9 CHARACTER MAPPING
 // ============================================================================
+
 
 // T9 key to character mapping (lowercase)
 const char T9_CHARS[][5] = {
@@ -97,12 +102,15 @@ const char T9_CHARS[][5] = {
     "wxyz"      // 9
 };
 
+
 // Symbol map for * key
 const char T9_SYMBOLS[] = " .,?!'\"1-()@/:_;+&%*[]{}#¤§|~€£$¥";
+
 
 // ============================================================================
 // CONSTRUCTOR
 // ============================================================================
+
 
 /**
  * @brief Constructor - Initialize member variables
@@ -144,7 +152,7 @@ Keypad::Keypad() :
     
     // Initialize key states
     for (uint8_t i = 0; i < KEYPAD_TOTAL_KEYS; i++) {
-        _keyStates[i].state = KEY_STATE_IDLE;
+        _keyStates[i].state = KEYPAD_STATE_IDLE;
         _keyStates[i].pressTime = 0;
         _keyStates[i].releaseTime = 0;
         _keyStates[i].lastEventTime = 0;
@@ -160,9 +168,11 @@ Keypad::Keypad() :
     initKeyMap();
 }
 
+
 // ============================================================================
 // DESTRUCTOR
 // ============================================================================
+
 
 /**
  * @brief Destructor - Clean up resources
@@ -171,9 +181,11 @@ Keypad::~Keypad() {
     end();
 }
 
+
 // ============================================================================
 // INITIALIZATION
 // ============================================================================
+
 
 /**
  * @brief Initialize keypad driver
@@ -219,6 +231,7 @@ bool Keypad::begin() {
     return true;
 }
 
+
 /**
  * @brief Stop keypad scanning
  */
@@ -234,6 +247,7 @@ void Keypad::end() {
     
     KEYPAD_DEBUG("Keypad stopped");
 }
+
 
 /**
  * @brief Initialize GPIO pins
@@ -252,6 +266,7 @@ void Keypad::initPins() {
     
     KEYPAD_DEBUG("  ✓ GPIO pins configured");
 }
+
 
 /**
  * @brief Initialize key mapping matrix
@@ -292,9 +307,11 @@ void Keypad::initKeyMap() {
     KEYPAD_DEBUG("  ✓ Key mapping initialized");
 }
 
+
 // ============================================================================
 // EVENT READING
 // ============================================================================
+
 
 /**
  * @brief Read next key event from queue
@@ -315,6 +332,7 @@ KeyEvent Keypad::read() {
     return event;
 }
 
+
 /**
  * @brief Peek at next event without removing it
  * 
@@ -328,6 +346,7 @@ KeyEvent Keypad::peek() const {
     return _eventQueue[_eventQueueTail];
 }
 
+
 /**
  * @brief Clear event queue
  */
@@ -335,6 +354,7 @@ void Keypad::clearQueue() {
     _eventQueueHead = 0;
     _eventQueueTail = 0;
 }
+
 
 /**
  * @brief Get number of events in queue
@@ -349,9 +369,11 @@ uint8_t Keypad::getEventCount() const {
     }
 }
 
+
 // ============================================================================
 // KEY STATE QUERIES
 // ============================================================================
+
 
 /**
  * @brief Check if a specific key is currently pressed
@@ -372,6 +394,7 @@ bool Keypad::isPressed(uint8_t key) const {
     return false;
 }
 
+
 /**
  * @brief Check if any key is currently pressed
  * 
@@ -385,6 +408,7 @@ bool Keypad::isAnyKeyPressed() const {
     }
     return false;
 }
+
 
 /**
  * @brief Get currently pressed keys
@@ -407,6 +431,7 @@ uint8_t Keypad::getPressedKeys(uint8_t* keys) const {
     return count;
 }
 
+
 /**
  * @brief Check if two keys are pressed simultaneously
  * 
@@ -418,9 +443,11 @@ bool Keypad::isComboPressed(uint8_t key1, uint8_t key2) const {
     return isPressed(key1) && isPressed(key2);
 }
 
+
 // ============================================================================
 // SCANNING
 // ============================================================================
+
 
 /**
  * @brief Manually trigger a keypad scan
@@ -451,6 +478,7 @@ void Keypad::scan() {
     // Update scan rate statistics
     updateScanRate();
 }
+
 
 /**
  * @brief Scan keypad matrix
@@ -495,6 +523,7 @@ void Keypad::scanMatrix() {
     }
 }
 
+
 /**
  * @brief Process all keys and generate events
  */
@@ -503,6 +532,7 @@ void Keypad::processKeys() {
         processKey(i);
     }
 }
+
 
 /**
  * @brief Process a single key through state machine
@@ -529,10 +559,10 @@ void Keypad::processKey(uint8_t index) {
         // ====================================================================
         // IDLE STATE
         // ====================================================================
-        case KEY_STATE_IDLE:
+        case KEYPAD_STATE_IDLE:
             if (currentlyPressed && !previouslyPressed) {
                 // Key press detected - start debouncing
-                state.state = KEY_STATE_DEBOUNCING;
+                state.state = KEYPAD_STATE_DEBOUNCING;
                 state.pressTime = now;
                 state.debounceCount = 1;
                 
@@ -543,14 +573,14 @@ void Keypad::processKey(uint8_t index) {
         // ====================================================================
         // DEBOUNCING STATE
         // ====================================================================
-        case KEY_STATE_DEBOUNCING:
+        case KEYPAD_STATE_DEBOUNCING:
             if (currentlyPressed) {
                 state.debounceCount++;
                 
                 // Check if debounce time has passed
                 if (now - state.pressTime >= _debounceTime) {
                     // Key is stable - confirmed press
-                    state.state = KEY_STATE_PRESSED;
+                    state.state = KEYPAD_STATE_PRESSED;
                     state.lastEventTime = now;
                     
                     // Generate PRESS event
@@ -569,7 +599,7 @@ void Keypad::processKey(uint8_t index) {
                 }
             } else {
                 // Key released before debounce complete - false trigger
-                state.state = KEY_STATE_IDLE;
+                state.state = KEYPAD_STATE_IDLE;
                 state.debounceCount = 0;
                 
                 KEYPAD_DEBUGF("Key 0x%02X: Bounce rejected", keyCode);
@@ -579,11 +609,11 @@ void Keypad::processKey(uint8_t index) {
         // ====================================================================
         // PRESSED STATE
         // ====================================================================
-        case KEY_STATE_PRESSED:
+        case KEYPAD_STATE_PRESSED:
             if (currentlyPressed) {
                 // Check for long press
                 if (now - state.pressTime >= _longPressTime) {
-                    state.state = KEY_STATE_LONG_PRESSED;
+                    state.state = KEYPAD_STATE_LONG_PRESSED;
                     
                     // Generate LONG_PRESS event
                     KeyEvent event;
@@ -621,7 +651,7 @@ void Keypad::processKey(uint8_t index) {
                 }
             } else {
                 // Key released
-                state.state = KEY_STATE_RELEASED;
+                state.state = KEYPAD_STATE_RELEASED;
                 state.releaseTime = now;
                 state.repeatCount = 0;
             }
@@ -630,10 +660,10 @@ void Keypad::processKey(uint8_t index) {
         // ====================================================================
         // LONG_PRESSED STATE
         // ====================================================================
-        case KEY_STATE_LONG_PRESSED:
+        case KEYPAD_STATE_LONG_PRESSED:
             if (!currentlyPressed) {
                 // Key released after long press
-                state.state = KEY_STATE_RELEASED;
+                state.state = KEYPAD_STATE_RELEASED;
                 state.releaseTime = now;
                 state.repeatCount = 0;
             }
@@ -642,7 +672,8 @@ void Keypad::processKey(uint8_t index) {
         // ====================================================================
         // RELEASED STATE
         // ====================================================================
-        case KEY_STATE_RELEASED:
+        case KEYPAD_STATE_RELEASED:
+        {
             // Generate RELEASE event
             KeyEvent event;
             event.key = keyCode;
@@ -666,10 +697,11 @@ void Keypad::processKey(uint8_t index) {
                 state.wasDoubleClick = false;
             } else {
                 // Return to idle
-                state.state = KEY_STATE_IDLE;
+                state.state = KEYPAD_STATE_IDLE;
                 state.wasDoubleClick = false;
             }
-            break;
+        }
+        break;
         
         // ====================================================================
         // WAIT_DOUBLE STATE (waiting for second press)
@@ -677,7 +709,7 @@ void Keypad::processKey(uint8_t index) {
         case KEY_STATE_WAIT_DOUBLE:
             if (currentlyPressed && !previouslyPressed) {
                 // Second press detected - double-click!
-                state.state = KEY_STATE_PRESSED;
+                state.state = KEYPAD_STATE_PRESSED;
                 state.pressTime = now;
                 state.wasDoubleClick = true;
                 
@@ -696,12 +728,13 @@ void Keypad::processKey(uint8_t index) {
                 KEYPAD_DEBUGF("Key 0x%02X: DOUBLE-CLICK", keyCode);
             } else if (now - state.releaseTime >= _doubleClickTime) {
                 // Double-click window expired
-                state.state = KEY_STATE_IDLE;
+                state.state = KEYPAD_STATE_IDLE;
                 state.wasDoubleClick = false;
             }
             break;
     }
 }
+
 
 /**
  * @brief Add event to queue
@@ -725,9 +758,11 @@ bool Keypad::addEvent(const KeyEvent& event) {
     return true;
 }
 
+
 // ============================================================================
 // STATISTICS
 // ============================================================================
+
 
 /**
  * @brief Update scan rate statistics
@@ -742,6 +777,7 @@ void Keypad::updateScanRate() {
         _lastStatsTime = now;
     }
 }
+
 
 /**
  * @brief Print keypad statistics
@@ -759,6 +795,7 @@ void Keypad::printStats() const {
     DEBUG_SERIAL.println("============================\n");
     #endif
 }
+
 
 /**
  * @brief Print current key states (debug)
@@ -781,9 +818,11 @@ void Keypad::printKeyStates() const {
     #endif
 }
 
+
 // ============================================================================
 // T9 TEXT ENTRY
 // ============================================================================
+
 
 /**
  * @brief Get T9 character for key and tap count
@@ -822,6 +861,7 @@ char Keypad::getT9Char(uint8_t key, uint8_t tapCount, bool uppercase) {
     return 0;  // Invalid
 }
 
+
 /**
  * @brief Get number of T9 characters for a key
  * 
@@ -845,9 +885,11 @@ uint8_t Keypad::getT9CharCount(uint8_t key) {
     return 0;
 }
 
+
 // ============================================================================
 // FREERTOS TASK
 // ============================================================================
+
 
 /**
  * @brief Static task function for automatic scanning
@@ -869,6 +911,7 @@ void Keypad::scanTask(void* parameter) {
     KEYPAD_DEBUG("Scan task ended");
     vTaskDelete(nullptr);
 }
+
 
 // ============================================================================
 // END OF FILE

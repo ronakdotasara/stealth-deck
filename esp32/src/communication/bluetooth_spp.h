@@ -3,7 +3,7 @@
  * bluetooth_spp.h - Bluetooth Serial Port Profile
  * ============================================================================
  * Version: 1.0.0
- * Date: 2025-11-24
+ * Date: 2025-11-30
  * Author: Stealth Deck Project
  * License: MIT
  * 
@@ -22,15 +22,16 @@
  * ============================================================================
  */
 
+
 #ifndef BLUETOOTH_SPP_H
 #define BLUETOOTH_SPP_H
 
+
 #include <Arduino.h>
 #include "BluetoothSerial.h"
+#include <functional>
 
-#define BT_DEVICE_NAME "StealthDeck"
-#define BT_PIN "1234"
-#define BT_BUFFER_SIZE 1024
+
 
 enum BTState {
     BT_STATE_IDLE,
@@ -41,11 +42,13 @@ enum BTState {
     BT_STATE_ERROR
 };
 
+
 struct BTDevice {
     char name[32];
     char address[18];
     int8_t rssi;
 };
+
 
 class BluetoothSPP {
 public:
@@ -72,8 +75,9 @@ public:
     void setDeviceName(const char* name);
     const char* getDeviceName();
     
-    void setDataCallback(void (*callback)(const uint8_t* data, size_t length));
-    void setConnectCallback(void (*callback)(bool connected));
+    // Changed to std::function to support lambdas
+    void setDataCallback(std::function<void(const uint8_t*, size_t)> callback);
+    void setConnectCallback(std::function<void(bool)> callback);
     
     uint32_t getBytesReceived();
     uint32_t getBytesSent();
@@ -92,11 +96,13 @@ private:
     
     unsigned long lastActivityTime;
     
-    void (*dataCallback)(const uint8_t*, size_t);
-    void (*connectCallback)(bool);
+    // Changed to std::function
+    std::function<void(const uint8_t*, size_t)> dataCallback;
+    std::function<void(bool)> connectCallback;
     
     void handleIncomingData();
     void updateState();
 };
+
 
 #endif

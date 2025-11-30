@@ -3,7 +3,7 @@
  * smart_mode.h - Smart/AI Mode for Stealth Deck
  * ============================================================================
  * Version: 1.0.0
- * Date: 2025-11-24
+ * Date: 2025-11-30
  * Author: Stealth Deck Project
  * License: MIT
  * 
@@ -27,10 +27,12 @@
 #define SMART_MODE_H
 
 #include <Arduino.h>
+#include "../config.h"  // ADD THIS - For MAX_RESPONSE_LENGTH, MAX_HISTORY_ENTRIES
+#include "../input/keypad.h"  // ADD THIS - For KeyEvent type
 
 #define MAX_QUERY_LENGTH 256
-#define MAX_RESPONSE_LENGTH 2048
-#define MAX_HISTORY_ENTRIES 10
+// MAX_RESPONSE_LENGTH is now from config.h (256)
+// MAX_HISTORY_ENTRIES is now from config.h (20)
 
 enum SmartModeState {
     SMART_STATE_IDLE,
@@ -62,6 +64,24 @@ public:
     void reset();
     void update();
     
+    // ADD THESE NEW METHODS FOR MAIN.CPP:
+    void activate() {
+        Serial.println("Smart mode activated");
+        reset();
+    }
+    
+    void deactivate() {
+        Serial.println("Smart mode deactivated");
+    }
+    
+    void handleKeyEvent(KeyEvent event) {
+        // Wrapper for handleKey that accepts KeyEvent
+        if (event.type == KEY_EVENT_PRESS) {
+            handleKey(event.key);
+        }
+    }
+    
+    // EXISTING METHODS:
     void handleKey(uint8_t key);
     void handleTextInput(char c);
     void handleBackspace();

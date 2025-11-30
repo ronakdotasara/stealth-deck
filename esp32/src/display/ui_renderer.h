@@ -3,7 +3,7 @@
  * ui_renderer.h - Advanced UI Renderer
  * ============================================================================
  * Version: 1.0.0
- * Date: 2025-11-25
+ * Date: 2025-11-30
  * Author: Stealth Deck Project
  * License: MIT
  * 
@@ -28,8 +28,7 @@
 
 #include <Arduino.h>
 #include "display_driver.h"
-
-#define MAX_WIDGETS 10
+#include "../config.h"  // ADD THIS LINE - Provides MAX_WIDGETS definition
 
 enum WidgetType {
     WIDGET_LABEL,
@@ -121,7 +120,7 @@ public:
 private:
     DisplayDriver* display;
     
-    Widget widgets[MAX_WIDGETS];
+    Widget widgets[MAX_WIDGETS];  // Now MAX_WIDGETS is defined from config.h
     uint8_t widgetCount;
     
     void renderWidget(Widget* widget);

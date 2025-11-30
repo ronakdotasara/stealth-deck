@@ -3,7 +3,7 @@
  * calculator_mode.h - Calculator Mode for Stealth Deck
  * ============================================================================
  * Version: 1.0.0
- * Date: 2025-11-24
+ * Date: 2025-11-30
  * Author: Stealth Deck Project
  * License: MIT
  * 
@@ -27,6 +27,7 @@
 #define CALCULATOR_MODE_H
 
 #include <Arduino.h>
+#include "../input/keypad.h"  // ADD THIS - For KeyEvent type
 
 #define MAX_DISPLAY_LENGTH 16
 #define MAX_HISTORY_ENTRIES 20
@@ -66,6 +67,29 @@ public:
     void begin();
     void reset();
     
+    // ADD THESE NEW METHODS FOR MAIN.CPP:
+    void activate() {
+        Serial.println("Calculator mode activated");
+        reset();
+    }
+    
+    void deactivate() {
+        Serial.println("Calculator mode deactivated");
+    }
+    
+    void update() {
+        // Update calculator display if needed
+        // This can be called periodically to refresh the display
+    }
+    
+    void handleKeyEvent(KeyEvent event) {
+        // Wrapper for handleKey that accepts KeyEvent
+        if (event.type == KEY_EVENT_PRESS) {
+            handleKey(event.key);
+        }
+    }
+    
+    // EXISTING METHODS:
     void handleKey(uint8_t key);
     void handleDigit(uint8_t digit);
     void handleOperator(CalculatorOperator op);
@@ -119,4 +143,3 @@ private:
 };
 
 #endif
-

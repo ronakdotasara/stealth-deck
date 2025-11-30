@@ -26,7 +26,7 @@ void UIRenderer::render() {
         }
     }
     
-    display->display();
+    display->flush();  // FIXED: Use flush() instead of display()
 }
 
 void UIRenderer::clear() {
@@ -256,11 +256,11 @@ bool UIRenderer::scrollText(int16_t id, int16_t offset) {
 }
 
 void UIRenderer::drawStatusBar() {
-    // Draw line
-    display->drawLine(0, 15, 240, 15, true);
+    // FIXED: Draw line with color
+    display->drawLine(0, 15, 240, 15, COLOR_WHITE);
     
-    // Draw time (placeholder)
-    display->drawText(5, 2, "12:34", 1);
+    // FIXED: Draw time with color
+    display->drawText(5, 2, "12:34", COLOR_WHITE, 1);
     
     // Draw battery icon
     drawBatteryIcon(200, 2, 75);
@@ -270,22 +270,25 @@ void UIRenderer::drawStatusBar() {
 }
 
 void UIRenderer::drawBatteryIcon(uint16_t x, uint16_t y, uint8_t percentage) {
-    display->drawRect(x, y, 20, 10);
-    display->drawRect(x + 20, y + 3, 2, 4);
+    // FIXED: Add color parameters
+    display->drawRect(x, y, 20, 10, COLOR_WHITE);
+    display->drawRect(x + 20, y + 3, 2, 4, COLOR_WHITE);
     
     uint8_t fillWidth = (percentage * 18) / 100;
-    display->fillRect(x + 1, y + 1, fillWidth, 8, true);
+    display->fillRect(x + 1, y + 1, fillWidth, 8, COLOR_WHITE);
 }
 
 void UIRenderer::drawSignalIcon(uint16_t x, uint16_t y, uint8_t strength) {
     for (uint8_t i = 0; i < strength; i++) {
         uint8_t h = (i + 1) * 3;
-        display->fillRect(x + i * 4, y + (12 - h), 3, h, true);
+        // FIXED: Add color parameter
+        display->fillRect(x + i * 4, y + (12 - h), 3, h, COLOR_WHITE);
     }
 }
 
 void UIRenderer::drawFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
-    display->drawRect(x, y, w, h);
+    // FIXED: Add color parameter
+    display->drawRect(x, y, w, h, COLOR_WHITE);
 }
 
 void UIRenderer::renderWidget(Widget* widget) {
@@ -320,24 +323,28 @@ void UIRenderer::renderLabel(Widget* widget) {
         x = widget->x + widget->width - textWidth;
     }
     
-    display->drawText(x, widget->y, label->text, label->fontSize);
+    // FIXED: Add color parameter
+    display->drawText(x, widget->y, label->text, COLOR_WHITE, label->fontSize);
 }
 
 void UIRenderer::renderIcon(Widget* widget) {
     Icon* icon = (Icon*)widget->data;
     
     if (icon->bitmap) {
-        display->drawBitmap(widget->x, widget->y, icon->bitmap, icon->width, icon->height);
+        // FIXED: Add color parameter
+        display->drawBitmap(widget->x, widget->y, icon->bitmap, icon->width, icon->height, COLOR_WHITE);
     }
 }
 
 void UIRenderer::renderProgressBar(Widget* widget) {
     ProgressBar* bar = (ProgressBar*)widget->data;
     
-    display->drawRect(widget->x, widget->y, widget->width, widget->height);
+    // FIXED: Add color parameter
+    display->drawRect(widget->x, widget->y, widget->width, widget->height, COLOR_WHITE);
     
     uint16_t fillWidth = (bar->progress * (widget->width - 2)) / 100;
-    display->fillRect(widget->x + 1, widget->y + 1, fillWidth, widget->height - 2, true);
+    // FIXED: Add color parameter
+    display->fillRect(widget->x + 1, widget->y + 1, fillWidth, widget->height - 2, COLOR_WHITE);
     
     if (bar->showPercentage) {
         char text[8];
@@ -346,7 +353,8 @@ void UIRenderer::renderProgressBar(Widget* widget) {
         uint16_t textX = widget->x + (widget->width - strlen(text) * 6) / 2;
         uint16_t textY = widget->y + 1;
         
-        display->drawText(textX, textY, text, 1);
+        // FIXED: Add color parameter
+        display->drawText(textX, textY, text, COLOR_WHITE, 1);
     }
 }
 
@@ -354,8 +362,8 @@ void UIRenderer::renderScrollableText(Widget* widget) {
     ScrollableText* scrollText = (ScrollableText*)widget->data;
     
     if (scrollText->text) {
-        // Simple scrolling implementation
-        display->drawText(widget->x - scrollText->scrollOffset, widget->y, scrollText->text, 1);
+        // FIXED: Add color parameter
+        display->drawText(widget->x - scrollText->scrollOffset, widget->y, scrollText->text, COLOR_WHITE, 1);
     }
 }
 

@@ -43,8 +43,9 @@
  * ============================================================================
  */
 
+ 
 #include "uart_protocol.h"
-
+#include "config.h"
 // Debug logging
 #ifdef DEBUG
   #define UART_DEBUG(x) DEBUG_SERIAL.print("[UART] "); DEBUG_SERIAL.println(x)
